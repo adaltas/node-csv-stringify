@@ -84,6 +84,26 @@ stringifier = stringify();
 generator.pipe(stringifier).pipe(process.stdout);
 ```
 
+Options
+-------
+
+### Header
+
+```javascript
+var columns = {
+  year: 'birthYear',
+  phone: 'phone'
+};
+stringify({ header: true, columns: columns });
+```
+
+Will output:
+
+```csv
+birthYear,phone
+1985,12345667
+```
+
 Migration
 ---------
 
