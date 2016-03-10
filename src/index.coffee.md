@@ -174,6 +174,9 @@ Convert a line to a string. Line may be an object, an array or a string.
           else if typeof field is 'boolean'
             # Cast boolean to string
             field = if field then '1' else ''
+          else if field instanceof Date and @options.dateFormat is 'ISO'
+            # Cast date to ISO timestamp string
+            field = '' + field.toISOString()
           else if field instanceof Date
             # Cast date to timestamp string
             field = '' + field.getTime()
