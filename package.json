@@ -1,8 +1,12 @@
 {
-  "version": "2.0.0",
+  "version": "2.0.1",
   "name": "csv-stringify",
   "description": "CSV stringifier implementing the Node.js `stream.Transform` API",
-  "keywords": [ "csv", "stringify", "stringifier" ],
+  "keywords": [
+    "csv",
+    "stringify",
+    "stringifier"
+  ],
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
@@ -21,7 +25,7 @@
   "optionalDependencies": {},
   "main": "./lib",
   "scripts": {
-    "preversion": "grep '## Trunk' CHANGELOG.md && rm -rf lib && npm test",
+    "preversion": "rm -rf lib/*.js && npm test && grep '## Trunk' CHANGELOG.md",
     "version": "version=`grep '^  \"version\": ' package.json | sed 's/.*\"\\([0-9\\.]*\\)\".*/\\1/'` && sed -i \"s/## Trunk/## Version $version/\" CHANGELOG.md && git add CHANGELOG.md",
     "postversion": "git push && git push --tags && npm publish",
     "patch": "npm version patch -m 'Bump to version %s'",
