@@ -14,7 +14,7 @@
   },
   "homepage": "https://csv.js.org/stringify/",
   "dependencies": {
-    "lodash.get": "~4.4.2"
+    "lodash": "~4.17.11"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",

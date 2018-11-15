@@ -6,7 +6,7 @@ information.
 
     stream = require 'stream'
     util = require 'util'
-    get = require 'lodash.get'
+    get = require 'lodash/get'
 
 ## Usage
 
