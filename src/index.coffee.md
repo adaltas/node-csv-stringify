@@ -209,7 +209,7 @@ Convert a line to a string. Line may be an object, an array or a string.
 
       stringify: (chunk) ->
         return chunk if typeof chunk isnt 'object'
-        {columns, delimiter, header, quote, escape} = @options
+        {columns, header} = @options
         record = []
         # Record is an array
         if Array.isArray chunk
@@ -244,21 +244,27 @@ Convert a line to a string. Line may be an object, an array or a string.
         if Array.isArray record
           newrecord = ''
           for i in [0...record.length]
-            [value, field] = record[i]
+            [options, field] = record[i]
             if err
               @emit 'error', err
               return
+            if options and typeof options is 'object'
+              value = options.value
+            else
+              value = options
+              options = {}
+            mergedOptions = Object.assign({}, @options, options)
             if value
               unless typeof value is 'string'
                 @emit 'error', Error "Formatter must return a string, null or undefined, got #{JSON.stringify value}"
                 return null
-              containsdelimiter = value.indexOf(delimiter) >= 0
-              containsQuote = (quote isnt '') and value.indexOf(quote) >= 0
-              containsEscape = value.indexOf(escape) >= 0 and (escape isnt quote)
-              containsRowDelimiter = value.indexOf(@options.record_delimiter) >= 0
-              quoted = @options.quoted
-              quotedString = @options.quoted_string and typeof field is 'string'
-              quotedMatch = @options.quoted_match and typeof field is 'string' and @options.quoted_match.filter (quoted_match) ->
+              containsdelimiter = value.indexOf(mergedOptions.delimiter) >= 0
+              containsQuote = (mergedOptions.quote isnt '') and value.indexOf(mergedOptions.quote) >= 0
+              containsEscape = value.indexOf(mergedOptions.escape) >= 0 and (mergedOptions.escape isnt mergedOptions.quote)
+              containsRowDelimiter = value.indexOf(mergedOptions.record_delimiter) >= 0
+              quoted = mergedOptions.quoted
+              quotedString = mergedOptions.quoted_string and typeof field is 'string'
+              quotedMatch = mergedOptions.quoted_match and typeof field is 'string' and mergedOptions.quoted_match.filter (quoted_match) ->
                 if typeof quoted_match is 'string'
                   value.indexOf(quoted_match) isnt -1
                 else
@@ -266,18 +272,18 @@ Convert a line to a string. Line may be an object, an array or a string.
               quotedMatch = quotedMatch and quotedMatch.length > 0
               shouldQuote = containsQuote or containsdelimiter or containsRowDelimiter or quoted or quotedString or quotedMatch
               if shouldQuote and containsEscape
-                regexp = if escape is '\\' then new RegExp(escape + escape, 'g') else new RegExp(escape, 'g');
-                value = value.replace(regexp, escape + escape)
+                regexp = if mergedOptions.escape is '\\' then new RegExp(mergedOptions.escape + mergedOptions.escape, 'g') else new RegExp(mergedOptions.escape, 'g');
+                value = value.replace(regexp, mergedOptions.escape + mergedOptions.escape)
               if containsQuote
-                regexp = new RegExp(quote,'g')
-                value = value.replace(regexp, escape + quote)
+                regexp = new RegExp(mergedOptions.quote,'g')
+                value = value.replace(regexp, mergedOptions.escape + mergedOptions.quote)
               if shouldQuote
-                value = quote + value + quote
+                value = mergedOptions.quote + value + mergedOptions.quote
               newrecord += value
-            else if @options.quoted_empty or (not @options.quoted_empty? and field is '' and @options.quoted_string)
-              newrecord += quote + quote
+            else if mergedOptions.quoted_empty or (not mergedOptions.quoted_empty? and field is '' and mergedOptions.quoted_string)
+              newrecord += mergedOptions.quote + mergedOptions.quote
             if i isnt record.length - 1
-              newrecord += delimiter
+              newrecord += mergedOptions.delimiter
           record = newrecord
         record
 
